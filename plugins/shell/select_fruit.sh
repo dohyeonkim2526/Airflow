@@ -1,7 +1,7 @@
 echo "Please select fruits between (APPLE or ORANGE or GRAPE)."
 echo "You need to enter in English capital letters."
 
-FRUIT = $1 # 첫번째 입력인자
+FRUIT = $1
 
 if [$FRUIT == APPLE]; then
     echo "You selected Apple!"
