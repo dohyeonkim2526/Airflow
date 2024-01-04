@@ -1,13 +1,13 @@
 echo "Please select fruits between (APPLE or ORANGE or GRAPE)."
 echo "You need to enter in English capital letters."
 
-FRUIT = $1
+FRUIT = $1 # 첫번째 인자
 
-if [$FRUIT == APPLE]; then
+if [ $FRUIT == APPLE ]; then
     echo "You selected Apple!"
-elif [$FRUIT == ORANGE]; then
+elif [ $FRUIT == ORANGE ]; then
     echo "You selected Orange!"
-elif [$FRUIT == GRAPE]; then
+elif [ $FRUIT == GRAPE ]; then
     echo "You selected Grape!"
 else
     echo "You selected other Fruit!"
