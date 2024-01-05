@@ -6,7 +6,8 @@ with DAG(
     dag_id="example_python_operator",
     schedule=" 0 2 * * 1",  # 매주 월요일 2시 실행
     start_date=pendulum.datetime(2024, 1, 4, tz="Asia/Seoul"),
-    catchup=False
+    catchup=False,
+    tags=["test"]
 ) as dag:
     
     @task(task_id="python_task_1")

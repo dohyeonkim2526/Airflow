@@ -7,7 +7,8 @@ with DAG(
     dag_id="dags_bash_select_fruit",
     schedule="10 0 * * 6#1",    # 매월 첫번째주 토요일 0시 10분
     start_date=pendulum.datetime(2024, 1, 4, tz="Asia/Seoul"),
-    catchup=False
+    catchup=False,
+    tags=["test"]
 ) as dag:
     
     t1_orange=BashOperator(
