@@ -40,4 +40,4 @@ with DAG(
         print(prev_month_day_first.strftime('%Y-%m-%d'))
         print(prev_month_day_last.strftime('%Y-%m-%d'))
 
-    get_datetime_macro() >> get_datetime_calc
+    get_datetime_macro() >> get_datetime_calc()

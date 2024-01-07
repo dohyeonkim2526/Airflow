@@ -7,7 +7,8 @@ with DAG(
     dag_id="dags_bash_with_xcom",
     schedule="10 0 * * *",
     start_date=pendulum.datetime(2023, 3, 1, tz="Asia/Seoul"),
-    catchup=False
+    catchup=False,
+    tags=["test"]
 ) as dag:
     bash_push = BashOperator(
     task_id='bash_push',
