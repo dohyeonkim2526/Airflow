@@ -25,9 +25,10 @@ with DAG(
     )
 
     # 상위 Task-2
+    # (Task실패확인을 위해)에러발생시킴
     @task(task_id='python_upstream_1')
     def python_upstream_1():
-        raise AirflowException('downstream_1 Exception!') # (Task실패확인을 위해)에러발생시킴
+        raise AirflowException('downstream_1 Exception!')
     
     # 상위 Task-3
     @task(task_id='python_upstream_2')
@@ -35,11 +36,12 @@ with DAG(
         print('정상 처리')
 
     # 하위 Task
-    # all_done : 모든 상위 Task 실행 완료
-    @task(task_id='python_downstream_1', trigger_rule='all_done') # 원하는 방식으로 'trigger_rule' 설정 가능
+    # all_done : 모든 상위 Task 실행 완료(원하는 방식으로 'trigger_rule' 설정 가능)
+    @task(task_id='python_downstream_1', trigger_rule='all_done')
     def python_downstream_1():
         print('정상 처리')
 
     # task Flow
     # 참고.Task-2에서 고의로 에러를 발생해도 모두 수행되었으므로 하위Task는 실행되는 것이 정상
     [bash_upstream_1, python_upstream_1(), python_upstream_2()] >> python_downstream_1()
+    
