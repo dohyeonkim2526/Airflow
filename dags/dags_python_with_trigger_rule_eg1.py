@@ -14,7 +14,7 @@ with DAG(
     dag_id='dags_python_with_trigger_rule_eg1',
     start_date=pendulum.datetime(2024, 1, 8, tz='Asia/Seoul'),
     schedule=None,
-    catchup=None,
+    catchup=False,
     tags=['test']
 ) as dag:
     
@@ -44,4 +44,3 @@ with DAG(
     # task Flow
     # 참고.Task-2에서 고의로 에러를 발생해도 모두 수행되었으므로 하위Task는 실행되는 것이 정상
     [bash_upstream_1, python_upstream_1(), python_upstream_2()] >> python_downstream_1()
-    
