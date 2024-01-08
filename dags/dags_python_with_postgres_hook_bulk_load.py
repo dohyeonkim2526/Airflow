@@ -1,3 +1,10 @@
+# --------------------------------------------- # 
+# Bulk_load 사용법
+# * delimiter : Tab으로 변경 필요
+# * file header 삭제 후 업로드 필요
+# * 특수문자가 있는 경우 전처리 후 업로드 필요
+# --------------------------------------------- # 
+
 from airflow import DAG
 import pendulum
 from airflow.operators.python import PythonOperator
@@ -13,7 +20,7 @@ with DAG(
     
     def insrt_postgres(postgres_conn_id, tbl_nm, file_nm, **kwargs):
         postgres_hook = PostgresHook(postgres_conn_id)
-        postgres_hook.bulk_load(tbl_nm, file_nm, is_header = True)
+        postgres_hook.bulk_load(tbl_nm, file_nm)
 
     insrt_postgres = PythonOperator(
             task_id='insrt_postgres',
