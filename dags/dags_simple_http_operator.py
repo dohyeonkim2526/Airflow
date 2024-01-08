@@ -8,6 +8,7 @@
 # ------------------------------------------------------------------------ #
 
 from airflow import DAG
+from airflow.operators.bash import BashOperator
 from airflow.providers.http.operators.http import SimpleHttpOperator
 from airflow.decorators import task
 import pendulum
@@ -26,19 +27,19 @@ with DAG(
         http_conn_id='openapi.seoul.go.kr', # airflow connection 정보
         endpoint='{{var.value.apikey_openapi_seoul_go_kr}}/json/tbCycleStationInfo/1/10/',  # key는 변수로 사용
         method='GET',
-        headers={'Content-Type' : 'application/json',
-                 'charset' : 'utf-8',
-                 'Accept' : '*/*'
-                 }
+        headers={'Content-Type': 'application/json',
+                 'charset': 'utf-8',
+                 'Accept': '*/*'
+                }
     )
 
     @task(task_id='python_2')
     def python_2(**kwargs):
-        import json
-        from pprint import pprint
         ti=kwargs['ti']
         rslt=ti.xcom_pull(task_ids='tb_cycle_station_info') # SimpleHttpOperator 리턴값
+        import json
+        from pprint import pprint
         pprint(json.loads(rslt))
 
     # task Flow
-    tb_cycle_station_info >> python_2
+    tb_cycle_station_info >> python_2()
