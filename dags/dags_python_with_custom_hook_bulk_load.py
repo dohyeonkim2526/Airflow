@@ -6,7 +6,7 @@ from hooks.custom_postgres_hook import CustomPostgresHook  # custom Hook 만든 
 
 with DAG(
         dag_id='dags_python_with_custom_hook_bulk_load',
-        start_date=pendulum.datetime(2023, 4, 1, tz='Asia/Seoul'),
+        start_date=pendulum.datetime(2024, 1, 8, tz='Asia/Seoul'),
         schedule='0 7 * * *',
         catchup=False,
         tags=['test']
