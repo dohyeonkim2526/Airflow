@@ -8,7 +8,7 @@ with DAG(
         dag_id='dags_python_with_custom_hook_bulk_load',
         start_date=pendulum.datetime(2024, 1, 8, tz='Asia/Seoul'),
         schedule='0 7 * * *',
-        catchup=False,
+        catchup=True,
         tags=['test']
 ) as dag:
     
