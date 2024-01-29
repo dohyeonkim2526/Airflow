@@ -14,6 +14,33 @@ from airflow.hooks.base import BaseHook
 from airflow.operators.python import PythonOperator
 import pendulum # python에서 timezone을 쉽게 사용할 수 있도록 도와주는 라이브러리
 
+def get_openapi_data():
+    import requests
+    import xmltodict
+    import json
+    import pandas as pd 
+
+    http_conn_id = 'openapi.molit.go.kr', # Connection ID 정보
+    endpoint = 'OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade', # Endpoint URL
+    headers = {'Content-Type':'application/xml'},
+    params = {'LAWD_CD':'11110',
+              'DEAL_YMD':'201512',
+              'serviceKey':'{{ var.value.apikey_getRTMS_openapi_molit }}'}
+
+    connection = BaseHook.get_connection(http_conn_id)
+    request_url = f'http://{connection.host}:{connection.port}/{endpoint}'
+
+    response = requests.get(request_url, headers=headers, params=params)
+    content = response.content
+
+    dic = xmltodict.parse(content)
+    items = dic['response']['body']['items']['item']
+
+    json_string = json.dumps(items)
+    df = pd.read_json(json_string, orient='records')
+    
+    return df
+
 with DAG(
     dag_id = 'dags_openapi_test',
     start_date = pendulum.datetime(2024, 1, 29, tz='Asia/Seoul'),
@@ -21,32 +48,6 @@ with DAG(
     catchup = False, # dag가 실행되지 않았던 과거 시점 task를 실행할지에 대한 여부
     tags = ['project']
 ) as dag:
-
-    http_conn_id = 'openapi.molit.go.kr', # Connection ID 정보
-    endpoint = 'OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade?LAWD_CD=11110&DEAL_YMD=201512&serviceKey={{var.value.apikey_getRTMS_openapi_molit}}', # Endpoint URL
-    method = 'GET', # HTTP method
-    headers = {'Content-Type':'application/xml'}
-
-    connection = BaseHook.get_connection(http_conn_id)
-    request_url = f'http://{connection.host}:{connection.port}/{endpoint}'
-    
-    def get_openapi_data():
-        import requests
-        import xmltodict
-        import json
-        import pandas as pd 
-
-        response = requests.get(request_url, headers)
-        content = response.content
-        dic = xmltodict.parse(content)
-
-        jsonString = json.dumps(dic['response']['body']['items'])
-        json_object = json.loads(jsonString)
-
-        df = pd.DataFrame(json_object)
-        normalized_df = pd.json_normalize(df['item'])
-        
-        return normalized_df
 
     getRTMS_task = PythonOperator(
         task_id = 'getRTMS_task',
