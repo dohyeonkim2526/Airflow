@@ -34,7 +34,7 @@ with DAG(
         headers={'Content-Type':'application/xml'}
     )
 
-    @task(task_id='getData')
+    @task
     def getData(**kwargs):
         ti=kwargs['ti']
         result=ti.xcom_pull(task_ids='task_getRTMS_data')
