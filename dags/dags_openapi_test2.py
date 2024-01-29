@@ -14,15 +14,13 @@ with DAG(
     getRTMS_openapi_data = SimpleHttpOperator(
         task_id='getRTMS_openapi_data',
         http_conn_id='openapi.molit.go.kr',
-        endpoint='OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade',
+        # endpoint='OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade',
+        endpoint='OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade?LAWD_CD=11110&DEAL_YMD=201512&serviceKey={{var.value.apikey_getRTMS_openapi_molit}}',
         method='GET',
-        # headers={'Content-Type':'application/xml'},
-        headers={'LAWD_CD':'11110',
-              'DEAL_YMD':'201512',
-              'serviceKey':'{{ var.value.apikey_getRTMS_openapi_molit }}'
-              },
-        log_response=True,
-        dag=dag
+        headers={'Content-Type': 'application/xml',
+                 'charset': 'utf-8',
+                 'Accept': '*/*'
+                }
     )
 
     @task(task_id='call_python')
