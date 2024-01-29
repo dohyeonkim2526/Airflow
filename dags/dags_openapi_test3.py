@@ -4,7 +4,7 @@ from airflow.decorators import task
 import pendulum
 
 with DAG(
-    dag_id='dags_openapi_test2',
+    dag_id='dags_openapi_test3',
     start_date=pendulum.datetime(2024, 1, 29, tz='Asia/Seoul'),
     schedule=None,
     catchup=False,
