@@ -20,6 +20,7 @@ with DAG(
               'DEAL_YMD':'201512',
               'serviceKey':'{{ var.value.apikey_getRTMS_openapi_molit }}'
               },
+        log_response=True,
         dag=dag
     )
 
