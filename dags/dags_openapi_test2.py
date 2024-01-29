@@ -15,7 +15,7 @@ with DAG(
         task_id='getRTMS_openapi_data',
         http_conn_id='openapi.molit.go.kr',
         # endpoint='OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade',
-        endpoint='OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade?LAWD_CD=11110&DEAL_YMD=201512&serviceKey={{var.value.apikey_getRTMS_openapi_molit}}',
+        endpoint='OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade?LAWD_CD=11110&DEAL_YMD=201512&serviceKey={{var.value.apikey_getRTMS_openapi_molit}}/',
         method='GET',
         headers={'Content-Type': 'application/xml',
                  'charset': 'utf-8',
