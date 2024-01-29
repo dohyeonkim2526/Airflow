@@ -29,7 +29,7 @@ with DAG(
     task_getRTMS_data = SimpleHttpOperator(
         task_id='task_getRTMS_data',
         http_conn_id='openapi.molit.go.kr', # Connection ID 정보
-        endpoint='OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade?serviceKey={{var.value.apikey_getRTMS_openapi_molit}}&LAWD_CD={{var.value.lawdcd_getRTMS_openapi_molit}}&DEAL_YMD={{var.value.dealymd_getRTMS_openapi_molit}}', # Endpoint URL
+        endpoint='OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade?serviceKey={{var.value.apikey_getRTMS_openapi_molit}}&LAWD_CD=11110&DEAL_YMD=201512', # Endpoint URL
         #endpoint='OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade?LAWD_CD={{var.value.lawdcd_getRTMS_openapi_molit}}&DEAL_YMD={{var.value.dealymd_getRTMS_openapi_molit}}&serviceKey={{var.value.apikey_getRTMS_openapi_molit}}', # Endpoint URL
         #endpoint='OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade',
         method='GET', # HTTP method
