@@ -16,7 +16,7 @@ import pendulum # python에서 timezone을 쉽게 사용할 수 있도록 도와
 
 with DAG(
     dag_id='dags_openapi_test',
-    start_date=pendulum.datetime(2024, 1, 29),
+    start_date=pendulum.datetime(2024, 1, 29, tz='Asia/Seoul'),
     schedule=None,
     catchup=False, # dag가 실행되지 않았던 과거 시점 task를 실행할지에 대한 여부
     tags=['project']
@@ -31,7 +31,7 @@ with DAG(
         http_conn_id='openapi.molit.go.kr', # Connection ID 정보
         endpoint='OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade?LAWD_CD={{var.value.lawdcd_getRTMS_openapi_molit}}&DEAL_YMD={{var.value.dealymd_getRTMS_openapi_molit}}&serviceKey={{var.value.apikey_getRTMS_openapi_molit}}', # Endpoint URL
         method='GET', # HTTP method
-        headers={'Content-Type':'application/xml'}
+        headers={'Content-Type':'application/json'}
     )
 
     @task(task_id='getData')
