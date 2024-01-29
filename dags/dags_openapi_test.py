@@ -39,12 +39,13 @@ with DAG(
               'serviceKey':'{{ var.value.apikey_getRTMS_openapi_molit }}'}
     )
 
-    @task(task_id='getData')
-    def getData(**kwargs):
-        ti=kwargs['ti']
-        result=ti.xcom_pull(task_ids='task_getRTMS_data')
-        print(result)
+    # @task(task_id='getData')
+    # def getData(**kwargs):
+    #     ti=kwargs['ti']
+    #     result=ti.xcom_pull(task_ids='task_getRTMS_data')
+    #     print(result)
 
     # task
-    task_getRTMS_data >> getData()
+    # task_getRTMS_data >> getData()
+    task_getRTMS_data
     
