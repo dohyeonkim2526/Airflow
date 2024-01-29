@@ -30,12 +30,13 @@ with DAG(
         task_id='task_getRTMS_data',
         http_conn_id='openapi.molit.go.kr', # Connection ID 정보
         #endpoint='OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade?LAWD_CD={{var.value.lawdcd_getRTMS_openapi_molit}}&DEAL_YMD={{var.value.dealymd_getRTMS_openapi_molit}}&serviceKey={{var.value.apikey_getRTMS_openapi_molit}}', # Endpoint URL
-        endpoint='OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade',
+        endpoint='/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade',
         method='GET', # HTTP method
-        headers={'Content-Type':'application/json'},
-        data={'LAWD_CD':'{{var.value.lawdcd_getRTMS_openapi_molit}}',
-              'DEAL_YMD':'{{var.value.dealymd_getRTMS_openapi_molit}}',
-              'serviceKey':'{{var.value.apikey_getRTMS_openapi_molit}}'}
+        headers={'Content-Type':'application/xml'},
+        data={'LAWD_CD':'{{ var.value.lawdcd_getRTMS_openapi_molit }}',
+              'DEAL_YMD':'{{ var.value.dealymd_getRTMS_openapi_molit }}',
+              'serviceKey':'{{ var.value.apikey_getRTMS_openapi_molit }}'},
+        dag=dag
     )
 
     @task(task_id='getData')
