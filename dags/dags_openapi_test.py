@@ -10,42 +10,50 @@
 # * Http를 이용하여 api를 처리하는 RestAPI 호출시 사용 가능
 
 from airflow import DAG
-from airflow.providers.http.operators.http import SimpleHttpOperator
-from airflow.decorators import task
+from airflow.hooks.base import BaseHook
+from airflow.operators.python import PythonOperator
 import pendulum # python에서 timezone을 쉽게 사용할 수 있도록 도와주는 라이브러리
 
 with DAG(
-    dag_id='dags_openapi_test',
-    start_date=pendulum.datetime(2024, 1, 29, tz='Asia/Seoul'),
-    schedule=None,
-    catchup=False, # dag가 실행되지 않았던 과거 시점 task를 실행할지에 대한 여부
-    tags=['project']
+    dag_id = 'dags_openapi_test',
+    start_date = pendulum.datetime(2024, 1, 29, tz='Asia/Seoul'),
+    schedule = None,
+    catchup = False, # dag가 실행되지 않았던 과거 시점 task를 실행할지에 대한 여부
+    tags = ['project']
 ) as dag:
-    
-    # apiKey 정보 : var.value.apikey_getRTMS_openapi_molit
-    # 지역코드 정보 : var.value.lawdcd_getRTMS_openapi_molit
-    # 계약월 정보 : var.value.dealymd_getRTMS_openapi_molit
 
-    task_getRTMS_data = SimpleHttpOperator(
-        task_id='task_getRTMS_data',
-        http_conn_id='openapi.molit.go.kr', # Connection ID 정보
-        #endpoint='OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade?serviceKey={{var.value.apikey_getRTMS_openapi_molit}}&LAWD_CD=11110&DEAL_YMD=201512', # Endpoint URL
-        #endpoint='OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade?LAWD_CD={{var.value.lawdcd_getRTMS_openapi_molit}}&DEAL_YMD={{var.value.dealymd_getRTMS_openapi_molit}}&serviceKey={{var.value.apikey_getRTMS_openapi_molit}}', # Endpoint URL
-        endpoint='/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade',
-        method='GET', # HTTP method
-        headers={'Content-Type':'application/xml'},
-        data={'LAWD_CD':'11110',
-              'DEAL_YMD':'201512',
-              'serviceKey':'{{ var.value.apikey_getRTMS_openapi_molit }}'}
+    http_conn_id = 'openapi.molit.go.kr', # Connection ID 정보
+    endpoint = 'OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade?LAWD_CD=11110&DEAL_YMD=201512&serviceKey={{var.value.apikey_getRTMS_openapi_molit}}', # Endpoint URL
+    method = 'GET', # HTTP method
+    headers = {'Content-Type':'application/xml'}
+
+    connection = BaseHook.get_connection(http_conn_id)
+    request_url = f'http://{connection.host}:{connection.port}/{endpoint}'
+    
+    def get_openapi_data():
+        import requests
+        import xmltodict
+        import json
+        import pandas as pd 
+
+        response = requests.get(request_url, headers)
+        content = response.content
+        dic = xmltodict.parse(content)
+
+        jsonString = json.dumps(dic['response']['body']['items'])
+        json_object = json.loads(jsonString)
+
+        df = pd.DataFrame(json_object)
+        normalized_df = pd.json_normalize(df['item'])
+        
+        return normalized_df
+
+    getRTMS_task = PythonOperator(
+        task_id = 'getRTMS_task',
+        python_callable = get_openapi_data,
+        dag = dag
     )
 
-    # @task(task_id='getData')
-    # def getData(**kwargs):
-    #     ti=kwargs['ti']
-    #     result=ti.xcom_pull(task_ids='task_getRTMS_data')
-    #     print(result)
+    getRTMS_task
 
-    # task
-    # task_getRTMS_data >> getData()
-    task_getRTMS_data
     
