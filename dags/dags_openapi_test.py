@@ -41,5 +41,5 @@ with DAG(
         print(result)
 
     # task
-    task_getRTMS_data >> getData()
+    task_getRTMS_data >> getData
     
