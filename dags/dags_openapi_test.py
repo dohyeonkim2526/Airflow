@@ -16,31 +16,32 @@ import pendulum # python에서 timezone을 쉽게 사용할 수 있도록 도와
 
 def get_openapi_data():
     import requests
-    import xmltodict
-    import json
+    import bs4
     import pandas as pd 
 
-    # http_conn_id = 'openapi.seoul.go.kr', # Connection ID 정보
-    # endpoint = 'OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade', # Endpoint URL
-    # headers = {'Content-Type':'application/xml'},
-    # params = {'LAWD_CD':'11110',
-    #           'DEAL_YMD':'201512',
-    #           'serviceKey':'{{ var.value.apikey_getRTMS_openapi_molit }}'}
+    host_url = 'http://openapi.seoul.go.kr:8088'
+    endpoint = '{{var.value.apikey_openapi_seoul_go_kr}}/xml/seoulPublicHygieneBiz/1/5/'
+    headers = {'Content-Type':'application/xml'}
 
-    # connection = BaseHook.get_connection(http_conn_id)
-    # request_url = f'http://{connection.host}:{connection.port}/{endpoint}'
-    request_url = 'http://openapi.seoul.go.kr:8088/{{var.value.apikey_openapi_seoul_go_kr}}/xml/seoulPublicHygieneBiz/1/5/'
-    # request_url = 'http://openapi.molit.go.kr:8081/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade?LAWD_CD=11110&DEAL_YMD=201512&serviceKey=H2IR0IidJiL8%2BelzLkLrCd5jxthjDayM22614UIUSyu7kHXEs8fKxzz43B6MshNDf4uWZ1WeAjieAXMOG6h1VA%3D%3D'
+    request_url = f'{host_url}/{endpoint}'
+    response = requests.get(request_url, headers=headers)
+    
+    content = response.text
+    xml_obj = bs4.BeautifulSoup(content,'lxml-xml')
+    rows = xml_obj.findAll('item')
+    
+    name_list, value_list, row_list = list(), list(), list()
 
-    # response = requests.get(request_url, headers=headers, params=params)
-    response = requests.get(request_url, headers={'Content-Type':'application/xml'})
-    content = response.content
-
-    dic = xmltodict.parse(content)
-    items = dic['response']['body']['items']['item']
-
-    json_string = json.dumps(items)
-    df = pd.read_json(json_string, orient='records')
+    for i in range(0, len(rows)):
+        columns = rows[i].find_all()
+        for j in range(0,len(columns)):
+            if i ==0:
+                name_list.append(columns[j].name)
+            value_list.append(columns[j].text)
+        row_list.append(value_list)
+        value_list=[]
+   
+    df = pd.DataFrame(row_list, columns=name_list)
     
     return df
 
