@@ -8,8 +8,10 @@
 from airflow import DAG
 from airflow.models.variable import Variable
 from airflow.operators.python import PythonOperator
+from airflow.providers.mysql.hooks.mysql import MySqlHook
 import pendulum # python에서 timezone을 쉽게 사용할 수 있도록 도와주는 라이브러리
 
+# openAPI 데이터 수집
 def get_openapi_data():
     import requests
     import bs4
@@ -36,7 +38,7 @@ def get_openapi_data():
     for i in range(0, len(rows)):
         columns = rows[i].find_all()
         for j in range(0,len(columns)):
-            if i ==0:
+            if i == 0:
                 name_list.append(columns[j].name)   # 컬럼리스트
             value_list.append(columns[j].text)  # 데이터리스트
         row_list.append(value_list)
@@ -47,6 +49,34 @@ def get_openapi_data():
     
     return df
 
+# Insert Mysql DB
+def insert_data(**kwargs):
+    df = kwargs['ti'].xcom_pull(task_ids = 'getRTMS_task') # openAPI에서 수집한 결과
+
+    mysql_hook = MySqlHook(mysql_conn_id='mysql') # mysql connection 정보
+    mysql_hook.insert_rows(table = 'test_openapi', rows = df.to_dict(orient='records'))
+
+    # import mysql.connector
+    # from mysql.connector import Error
+    # connection = BaseHook.get_connection('mysql') # mysql connection 정보
+    # db_config = {'host': connection.host,
+    #              'port': connection.port,
+    #              'database': connection.schema,
+    #              'user': connection.login,
+    #              'password': connection.password
+    # }
+
+    # try:
+    #     with mysql.connector(**db_config) as connection:
+    #         with connection.cursor() as cursor:
+    #             cursor.execute(query)
+    #             result = cursor.fetchall()
+    #             print(result)
+
+    # except Error as e:
+    #     print(f"Error: {e}")
+
+# Airflow Dag
 with DAG(
     dag_id = 'dags_openapi_test',
     start_date = pendulum.datetime(2024, 1, 29, tz='Asia/Seoul'),
@@ -61,5 +91,11 @@ with DAG(
         dag = dag
     )
 
+    insert_task = PythonOperator(
+        task_id = 'insert_task',
+        python_callable = insert_data,
+        dag = dag
+    )
+
     # task 실행
-    getRTMS_task
+    getRTMS_task >> insert_task
