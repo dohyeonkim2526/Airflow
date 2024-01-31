@@ -22,13 +22,14 @@ def get_openapi_data():
     base_url = 'http://openapi.molit.go.kr'
     port = '8081'
     endpoint = 'OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade'
-    # service_key = '{{var.value.apikey_getRTMS_openapi_molit}}'
+    service_key = '{{ var.value.apikey_getRTMS_openapi_molit }}'
     # service_key = 'H2IR0IidJiL8%2BelzLkLrCd5jxthjDayM22614UIUSyu7kHXEs8fKxzz43B6MshNDf4uWZ1WeAjieAXMOG6h1VA%3D%3D'
     headers = {'Content-Type':'application/xml'}
 
     # request_url = f'{base_url}:{port}/{endpoint}?serviceKey={service_key}&LAWD_CD=11110&DEAL_YMD=201512'
-    request_url = f'{base_url}:{port}/{endpoint}?serviceKey=' + '{{var.value.apikey_getRTMS_openapi_molit}}&LAWD_CD=11110&DEAL_YMD=201512'
-    print(request_url)     
+    request_url = f'{base_url}:{port}/{endpoint}?serviceKey={service_key}&LAWD_CD=11110&DEAL_YMD=201512'
+    print('service key:', service_key)
+    print('url:', request_url)     
     response = requests.get(request_url, headers=headers)
     
     content = response.text
