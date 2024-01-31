@@ -27,7 +27,7 @@ def get_openapi_data():
     headers = {'Content-Type':'application/xml'}
 
     # request_url = f'{base_url}:{port}/{endpoint}?serviceKey={service_key}&LAWD_CD=11110&DEAL_YMD=201512'
-    request_url = f'{base_url}:{port}/{endpoint}?serviceKey={{var.value.apikey_getRTMS_openapi_molit}}&LAWD_CD=11110&DEAL_YMD=201512'
+    request_url = f'{base_url}:{port}/{endpoint}?serviceKey=' + '{{var.value.apikey_getRTMS_openapi_molit}}&LAWD_CD=11110&DEAL_YMD=201512'
     print(request_url)     
     response = requests.get(request_url, headers=headers)
     
