@@ -19,11 +19,13 @@ def get_openapi_data():
     import bs4
     import pandas as pd 
 
-    host_url = 'http://openapi.seoul.go.kr:8088'
-    endpoint = '{{var.value.apikey_openapi_seoul_go_kr}}/xml/seoulPublicHygieneBiz/1/5/'
+    base_url = 'http://openapi.molit.go.kr'
+    port = '8081'
+    endpoint = 'OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade'
+    service_key = '{{var.value.apikey_getRTMS_openapi_molit}}'
     headers = {'Content-Type':'application/xml'}
 
-    request_url = f'{host_url}/{endpoint}'
+    request_url = f'{base_url}:{port}/{endpoint}?serviceKey={service_key}&LAWD_CD=11110&DEAL_YMD=201512'
     response = requests.get(request_url, headers=headers)
     
     content = response.text
