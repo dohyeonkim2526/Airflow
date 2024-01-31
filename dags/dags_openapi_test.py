@@ -20,7 +20,7 @@ def get_openapi_data():
     import json
     import pandas as pd 
 
-    # http_conn_id = 'openapi.molit.go.kr', # Connection ID 정보
+    # http_conn_id = 'openapi.seoul.go.kr', # Connection ID 정보
     # endpoint = 'OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade', # Endpoint URL
     # headers = {'Content-Type':'application/xml'},
     # params = {'LAWD_CD':'11110',
@@ -29,7 +29,8 @@ def get_openapi_data():
 
     # connection = BaseHook.get_connection(http_conn_id)
     # request_url = f'http://{connection.host}:{connection.port}/{endpoint}'
-    request_url = 'http://openapi.molit.go.kr:8081/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade?LAWD_CD=11110&DEAL_YMD=201512&serviceKey=H2IR0IidJiL8%2BelzLkLrCd5jxthjDayM22614UIUSyu7kHXEs8fKxzz43B6MshNDf4uWZ1WeAjieAXMOG6h1VA%3D%3D'
+    request_url = 'http://openapi.seoul.go.kr:8088/{{var.value.apikey_openapi_seoul_go_kr}}/xml/seoulPublicHygieneBiz/1/5/'
+    # request_url = 'http://openapi.molit.go.kr:8081/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade?LAWD_CD=11110&DEAL_YMD=201512&serviceKey=H2IR0IidJiL8%2BelzLkLrCd5jxthjDayM22614UIUSyu7kHXEs8fKxzz43B6MshNDf4uWZ1WeAjieAXMOG6h1VA%3D%3D'
 
     # response = requests.get(request_url, headers=headers, params=params)
     response = requests.get(request_url, headers={'Content-Type':'application/xml'})
