@@ -52,11 +52,11 @@ def get_openapi_data():
 # Insert Mysql DB
 def insert_data(**kwargs):
     df = kwargs['ti'].xcom_pull(task_ids = 'getRTMS_task') # openAPI에서 수집한 결과
-    print(df)
 
-    mysql_hook = MySqlHook(mysql_conn_id='mysql') # mysql connection 정보
+    mysql_hook = MySqlHook.get_hook(conn_id = 'mysql') # mysql connection 정보
+    # mysql_hook = MySqlHook(mysql_conn_id='mysql') # mysql connection 정보
     print(mysql_hook)
-    
+
     mysql_hook.insert_rows(table = 'test_openapi', rows = df.to_dict(orient='records'))
 
     # import mysql.connector
