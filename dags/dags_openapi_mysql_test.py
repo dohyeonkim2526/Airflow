@@ -9,7 +9,6 @@ from airflow import DAG
 from airflow.models.variable import Variable
 from airflow.operators.python import PythonOperator
 from airflow.providers.mysql.hooks.mysql import MySqlHook
-from airflow.hooks.base import BaseHook
 import pendulum # python에서 timezone을 쉽게 사용할 수 있도록 도와주는 라이브러리
 
 # openAPI 데이터 수집
@@ -51,33 +50,32 @@ def get_openapi_data():
     return df
 
 # Insert Mysql DB
-def insert_data(**kwargs):
-    import mysql.connector
-    from mysql.connector import Error
-    
+def insert_data(**kwargs):    
     df = kwargs['ti'].xcom_pull(task_ids = 'getRTMS_task') # openAPI에서 수집한 결과
 
-    connection = BaseHook.get_connection(conn_id = 'mysql-conn') # mysql connection 정보
-    db_config = {'host': connection.host,
-                 'port': connection.port,
-                 'database': connection.schema,
-                 'user': connection.login,
-                 'password': connection.password
-    }
+    # connection = BaseHook.get_connection(conn_id = 'mysql-conn') # mysql connection 정보
+    # db_config = {'host': connection.host,
+    #              'port': connection.port,
+    #              'database': connection.schema,
+    #              'user': connection.login,
+    #              'password': connection.password
+    # }
 
-    try:
-        with mysql.connector(**db_config) as connection:
-            with connection.cursor() as cursor:
-                cursor.execute('select * from test_table;')
-                result = cursor.fetchall()
-                print(result)
+    # try:
+    #     with mysql.connector(**db_config) as connection:
+    #         with connection.cursor() as cursor:
+    #             cursor.execute('select * from test_table;')
+    #             result = cursor.fetchall()
+    #             print(result)
 
-    except Error as e:
-        print(f"Error: {e}")
+    # except Error as e:
+    #     print(f"Error: {e}")
 
-
-    # mysql_hook = MySqlHook.get_hook(conn_id = 'mysql-conn') # mysql connection
-    # print(mysql_hook)
+    mysql_hook = MySqlHook(mysql_conn_id = 'mysql-conn') # mysql connection
+    conn = mysql_hook.get_conn()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM test_table;')
+    cursor.close()
     
     # cols = ', '.join([f"{col} VARCHAR(250)" for col in df.columns]) # dataframe column 정보를 이용해서 create table
     # create_table = f"CREATE TABLE IF NOT EXISTS test_openapi ({cols})"
