@@ -78,7 +78,7 @@ def insert_data(**kwargs):
 
 # Airflow Dag
 with DAG(
-    dag_id = 'dags_openapi_test',
+    dag_id = 'dags_openapi_mysql_test',
     start_date = pendulum.datetime(2024, 1, 29, tz='Asia/Seoul'),
     schedule = None,
     catchup = False, # dag가 실행되지 않았던 과거 시점 task를 실행할지에 대한 여부
