@@ -53,7 +53,7 @@ def get_openapi_data():
 def insert_data(**kwargs):
     df = kwargs['ti'].xcom_pull(task_ids = 'getRTMS_task') # openAPI에서 수집한 결과
 
-    mysql_hook = MySqlHook.get_hook(mysql_conn_id = 'mysql') # mysql connection
+    mysql_hook = MySqlHook.get_hook(conn_id = 'mysql') # mysql connection
     
     cols = ', '.join([f"{col} VARCHAR(250)" for col in df.columns]) # dataframe column 정보를 이용해서 create table
     create_table = f"CREATE TABLE IF NOT EXISTS test_openapi ({cols})"
